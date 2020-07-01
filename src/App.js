@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import PokemonList from "./PokemonList";
-import Pagination from "./Pagination";
+import { PokemonList, PokemonDetails } from "./allPages";
+
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 function App() {
   const [pokemon, setpokemon] = useState([]);
@@ -21,6 +22,7 @@ function App() {
       setPrevPageUrl(res.data.previous);
       setNextPageUrl(res.data.next);
       setLoading(false);
+      console.log(res.data);
     });
   }, [currentPageUrl]);
 
@@ -46,14 +48,32 @@ function App() {
 
   return (
     <div className="App">
-      <PokemonList pokemon={pokemon} loading={loading} offset={offset} />
-      <Pagination
-        changeToPrev={changeToPrev}
-        changeToNext={changeToNext}
-        prevPageUrl={prevPageUrl}
-        nextPageUrl={nextPageUrl}
-        page={page}
-      />
+      <Router>
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={(props) => {
+              {
+              }
+              return (
+                <PokemonList
+                  {...props}
+                  pokemon={pokemon}
+                  loading={loading}
+                  offset={offset}
+                  changeToPrev={changeToPrev}
+                  changeToNext={changeToNext}
+                  prevPageUrl={prevPageUrl}
+                  nextPageUrl={nextPageUrl}
+                  page={page}
+                />
+              );
+            }}
+          ></Route>
+          <Route to="/:pokemon" component={PokemonDetails} />
+        </Switch>
+      </Router>
     </div>
   );
 }

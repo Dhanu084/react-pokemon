@@ -14,7 +14,7 @@ export default function Pagination({
           Prev
         </button>
       )}
-      <span className="page">{page}</span>
+      <span className="page-number">{page}</span>
       {nextPageUrl && (
         <button onClick={changeToNext} className="btn">
           Next
