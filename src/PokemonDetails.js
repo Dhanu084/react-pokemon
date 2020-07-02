@@ -8,8 +8,11 @@ export default function PokemonDetails(props) {
   const [pokemon, setPokemon] = useState({});
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    let cancel;
     axios
-      .get(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+      .get(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`, {
+        cancelToken: new axios.CancelToken((c) => (cancel = c)),
+      })
       .then((res) => {
         console.log(res.data.sprites.front_default);
         let data = res.data;
@@ -22,12 +25,16 @@ export default function PokemonDetails(props) {
         });
         setLoading(false);
       });
+
+    return () => cancel();
   }, [pokemonName]);
-  console.log(pokemon.moves);
+
   return (
-    <div>
+    <div className="pokedex mt-5">
       {loading && <div>Loading !!!</div>}
+
       <div className="large">
+        <label>POKEDEX</label>
         {!loading && (
           <div className="details card">
             <img src={pokemon.imageurl} />
@@ -38,11 +45,11 @@ export default function PokemonDetails(props) {
               </div>
               <div>
                 <strong>Height :</strong>
-                {pokemon.height} feet
+                {pokemon.height} inches
               </div>
               <div>
                 <strong>Weight :</strong>
-                {pokemon.weight} kg
+                {pokemon.weight} pounds
               </div>
             </div>
             <div className="card moves">

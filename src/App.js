@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { PokemonList, PokemonDetails } from "./allPages";
+import { PokemonList, PokemonDetails, Navbar } from "./allPages";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
@@ -16,14 +16,22 @@ function App() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
+    let cancel;
     setLoading(true);
-    axios.get(currentPageUrl).then((res) => {
-      setpokemon(res.data.results);
-      setPrevPageUrl(res.data.previous);
-      setNextPageUrl(res.data.next);
-      setLoading(false);
-      console.log(res.data);
-    });
+    axios
+      .get(currentPageUrl, {
+        cancelToken: new axios.CancelToken((c) => (cancel = c)),
+      })
+      .then((res) => {
+        setpokemon(res.data.results);
+        setPrevPageUrl(res.data.previous);
+        setNextPageUrl(res.data.next);
+        setLoading(false);
+      });
+
+    return () => {
+      cancel();
+    };
   }, [currentPageUrl]);
 
   const changeToPrev = () => {
@@ -48,6 +56,7 @@ function App() {
 
   return (
     <div className="App">
+      <Navbar setCurrentPageUrl={setCurrentPageUrl} />
       <Router>
         <Switch>
           <Route

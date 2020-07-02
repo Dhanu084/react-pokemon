@@ -26,14 +26,20 @@ export default function PokemonList({
     imageurl,
   };
   const getPokemon = (name) => {
-    axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`).then((res) => {
-      setState(res.data.stats);
-      setWeight(res.data.weight);
-      setHeight(res.data.height);
-      setMoves(res.data.moves);
-      setImageUrl(res.data.sprites.front_default);
-      console.log(pokemonDetail, moves, res.data.moves, res.data.height);
-    });
+    let cancel;
+    axios
+      .get(`https://pokeapi.co/api/v2/pokemon/${name}`, {
+        cancelToken: new axios.CancelToken((c) => (cancel = c)),
+      })
+      .then((res) => {
+        setState(res.data.stats);
+        setWeight(res.data.weight);
+        setHeight(res.data.height);
+        setMoves(res.data.moves);
+        setImageUrl(res.data.sprites.front_default);
+        console.log(pokemonDetail, moves, res.data.moves, res.data.height);
+      });
+    return () => cancel();
   };
   return (
     <div>
