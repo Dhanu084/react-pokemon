@@ -24,6 +24,7 @@ export default function Navbar(props) {
       return;
     }
     setSearching(true);
+    value = value.toLowerCase();
     const filteredArray = pokemons.filter((pokemon) => {
       return pokemon.name.startsWith(value);
     });
