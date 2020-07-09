@@ -1,24 +1,26 @@
 import React from "react";
 
 export default function Pagination({
-  changeToPrev,
+  next,
+  previous,
+  changeToPrevious,
   changeToNext,
-  prevPageUrl,
-  nextPageUrl,
-  page,
 }) {
   return (
-    <div className="buttons">
-      {prevPageUrl && (
-        <button onClick={changeToPrev} className="btn">
-          Prev
-        </button>
+    <div className="pagination">
+      {previous && (
+        <div>
+          <button className="page-link" onClick={changeToPrevious}>
+            prev
+          </button>
+        </div>
       )}
-      <span className="page-number">{page}</span>
-      {nextPageUrl && (
-        <button onClick={changeToNext} className="btn">
-          Next
-        </button>
+      {next && (
+        <div>
+          <button className="page-link" onClick={changeToNext}>
+            next
+          </button>
+        </div>
       )}
     </div>
   );

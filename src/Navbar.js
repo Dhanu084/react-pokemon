@@ -2,18 +2,21 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, BrowserRouter as Router } from "react-router-dom";
-export default function Navbar({ setCurrentPageUrl }) {
+import { useLocation } from "react-router";
+
+export default function Navbar(props) {
   const [pokemons, setPokemons] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
   const [searching, setSearching] = useState(false);
-
+  const location = useLocation();
   useEffect(() => {
     axios
       .get("https://pokeapi.co/api/v2/pokemon?limit=764&offset=200")
       .then((res) => {
         setPokemons(res.data.results);
       });
-  });
+    return () => {};
+  }, []);
 
   const handleSearch = (value) => {
     if (value.length == 0) {
@@ -22,39 +25,57 @@ export default function Navbar({ setCurrentPageUrl }) {
     }
     setSearching(true);
     const filteredArray = pokemons.filter((pokemon) => {
-      //console.log(pokemon.name.startsWith(value), pokemon.name);
       return pokemon.name.startsWith(value);
     });
 
     if (filteredArray.length > 0) setSearchResult(filteredArray);
     else setSearchResult([]);
-    return () => {
-      setSearching(false);
-      setSearchResult([]);
-    };
+  };
+
+  const handleClick = () => {
+    document.getElementById("search-text").value = "";
+    setSearchResult([]);
+    setSearching(false);
   };
 
   return (
     <div className="nav">
-      <Router>
-        <div className="search">
-          <input type="text" onChange={(e) => handleSearch(e.target.value)} />
-          {searchResult.length > 0 && searching && (
-            <div className="search-results">
-              <ul>
-                {searchResult.map((p) => (
-                  <Link to={`/${p.name}`} key={p.name}>
-                    <li>{p.name}</li>
+      <div className="logo">
+        <Link to="/">
+          <img
+            src="https://image.flaticon.com/icons/svg/528/528101.svg"
+            alt="pokemon ball"
+          />
+        </Link>
+      </div>
+      <div className="search">
+        <input
+          type="text"
+          onChange={(e) => handleSearch(e.target.value)}
+          placeholder="poke search"
+          id="search-text"
+        />
+        {searchResult.length > 0 && searching && (
+          <div className="search-results">
+            <ul>
+              {searchResult.map((p, index) => (
+                <li key={index}>
+                  <Link
+                    to={`/pokemon/${p.name}`}
+                    key={p.name}
+                    onClick={handleClick}
+                  >
+                    {p.name}
                   </Link>
-                ))}
-              </ul>
-            </div>
-          )}
-          {searchResult.length == 0 && searching && (
-            <div className="search-results">No pokemon found</div>
-          )}
-        </div>
-      </Router>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {searchResult.length == 0 && searching && (
+          <div className="search-results">No pokemon found</div>
+        )}
+      </div>
     </div>
   );
 }

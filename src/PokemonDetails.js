@@ -1,66 +1,58 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useHistory } from "react-router";
 
 export default function PokemonDetails(props) {
-  const [pokemonName, setPokemonName] = useState(
-    props.location.pathname.split("/")[1]
-  );
-  const [pokemon, setPokemon] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { match } = props;
+
+  const [details, setDetails] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [moves, setMoves] = useState([]);
+  const history = useHistory();
+
   useEffect(() => {
-    let cancel;
-    axios
-      .get(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`, {
-        cancelToken: new axios.CancelToken((c) => (cancel = c)),
-      })
-      .then((res) => {
-        console.log(res.data.sprites.front_default);
-        let data = res.data;
-        setPokemon({
-          name: pokemonName,
-          height: data.height,
-          weight: data.weight,
-          moves: res.data.moves.splice(0, 5),
-          imageurl: data.sprites.front_default,
-        });
+    setLoading(true);
+    const url = `https://pokeapi.co/api/v2/pokemon/${match.params.name}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setDetails(data);
+        setMoves(data.moves.splice(0, 5));
         setLoading(false);
       });
-
-    return () => cancel();
-  }, [pokemonName]);
+  }, [props]);
 
   return (
-    <div className="pokedex mt-5">
-      {loading && <div>Loading !!!</div>}
-
-      <div className="large">
-        <label>POKEDEX</label>
-        {!loading && (
-          <div className="details card">
-            <img src={pokemon.imageurl} />
-            <div className="card">
-              <div>
-                <strong>Name :</strong>
-                {pokemonName}
-              </div>
-              <div>
-                <strong>Height :</strong>
-                {pokemon.height} inches
-              </div>
-              <div>
-                <strong>Weight :</strong>
-                {pokemon.weight} pounds
-              </div>
-            </div>
-            <div className="card moves">
-              <h4>Top Moves</h4>
-              {pokemon.moves.map((p) => (
-                <p key={p.move.name}>{p.move.name}</p>
-              ))}
-            </div>
+    <div className="details-container card">
+      {loading && <div>loading!</div>}
+      {!loading && (
+        <div className="details">
+          <div className="left-div ">
+            <img
+              src={details.sprites ? details.sprites.front_default : ""}
+              alt={details.name}
+            />
           </div>
-        )}
-      </div>
+          <div className="right-div ">
+            <div>Name : {details.name}</div>
+            <div>
+              height : {details.height} <small>feet</small>
+            </div>
+            <div>
+              Weight : {details.weight} <small>kg</small>
+            </div>
+            <div>Base_Experience : {details.base_experience}</div>
+          </div>
+          <div className="moves">
+            <label>Top Moves</label>
+            {moves.map((m, index) => (
+              <div key={index} className="list-group-item">
+                {m.move.name}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

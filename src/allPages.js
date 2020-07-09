@@ -1,6 +1,6 @@
-import PokemonList from "./PokemonList";
+import Navbar from "./Navbar";
+import Home from "./Home";
 import PokemonDetails from "./PokemonDetails";
 import Pagination from "./Pagination";
-import Navbar from "./Navbar";
-
-export { PokemonList, PokemonDetails, Pagination, Navbar };
+import Pokemon from "./Pokemon";
+export { Navbar, Home, PokemonDetails, Pagination, Pokemon };
