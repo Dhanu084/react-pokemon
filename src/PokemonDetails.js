@@ -41,7 +41,7 @@ export default function PokemonDetails(props) {
             <div>
               Weight : {details.weight} <small>kg</small>
             </div>
-            <div>Base_Experience : {details.base_experience}</div>
+            <div>Base Exp : {details.base_experience}</div>
           </div>
           <div className="moves">
             <label>Top Moves</label>
