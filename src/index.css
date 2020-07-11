@@ -174,9 +174,23 @@ code {
   .pagination {
     width: 100%;
     display: flex;
-    bottom: 2%;
+    bottom: -1.5%;
   }
   .pagination div {
     margin: auto;
+  }
+  .search {
+    width: 70%;
+  }
+  .search-text {
+    width: 100%;
+  }
+  .search-results {
+    left: 24%;
+    width: 57.5%;
+  }
+
+  .home-container {
+    width: 100%;
   }
 }
